@@ -3,11 +3,11 @@ import React from "react";
 
 type Props = {
   headerHeight: Animated.AnimatedInterpolation<number>;
-  titleOpacity: Animated.AnimatedInterpolation<number>;
-  titleTranslateY: Animated.AnimatedInterpolation<number>;
+  logoOpacity: Animated.AnimatedInterpolation<number>;
+  logoTranslateY: Animated.AnimatedInterpolation<number>;
 };
 
-const Header = ({ headerHeight, titleOpacity, titleTranslateY }: Props) => {
+const Header = ({ headerHeight, logoOpacity, logoTranslateY }: Props) => {
   return (
     <Animated.View
       style={[
@@ -17,17 +17,17 @@ const Header = ({ headerHeight, titleOpacity, titleTranslateY }: Props) => {
         },
       ]}
     >
-      <Animated.Text
+      <Animated.Image
+        source={require('@/assets/images/logo.png')}
         style={[
-          styles.title,
+          styles.logo,
           {
-            opacity: titleOpacity,
-            transform: [{ translateY: titleTranslateY }],
+            opacity: logoOpacity,
+            transform: [{ translateY: logoTranslateY }],
           },
         ]}
-      >
-        Home
-      </Animated.Text>
+      />
+      
     </Animated.View>
   );
 };
@@ -36,20 +36,21 @@ export default Header;
 
 const styles = StyleSheet.create({
   header: {
+    flex: 1,
+    paddingHorizontal: 20,
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     zIndex: 1000,
     backgroundColor: "white",
-    justifyContent: "center",
-    alignItems: "center",
     shadowColor: "#000",
     shadowRadius: 4,
     elevation: 3,
   },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
+  logo: {
+    width: 40,
+    height: 40,
+    resizeMode: "contain",
   },
 });

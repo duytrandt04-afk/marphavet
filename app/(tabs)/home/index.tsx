@@ -2,9 +2,8 @@ import Header from "@/components/layout/Header";
 import { useRef } from "react";
 import { Animated, Platform, Text, View } from "react-native";
 
-const HEADER_HEIGHT = Platform.OS === "ios" ? 54 : 40;
-
 export default function Home() {
+  const HEADER_HEIGHT = Platform.OS === "ios" ? 54 : 40;
   const scrollY = useRef(new Animated.Value(0)).current;
   const lastScrollY = useRef(0);
   const headerTranslateY = useRef(new Animated.Value(0)).current;
@@ -44,7 +43,7 @@ export default function Home() {
     const scrollDelta = scrollYEnd - snapScrollYStart.current;
 
     let toValue;
-    if (scrollDelta > 0) {
+    if (scrollDelta > 10) {
       toValue = -HEADER_HEIGHT; 
     } else {
       toValue = 0; 
@@ -53,7 +52,7 @@ export default function Home() {
     if (currentTranslateY !== toValue) {
       Animated.timing(headerTranslateY, {
         toValue: toValue,
-        duration: 250,
+        duration: 300,
         useNativeDriver: false,
       }).start(() => {
         headerTranslateYValue.current = toValue;
@@ -67,28 +66,29 @@ export default function Home() {
     extrapolate: "clamp",
   });
 
-  const titleOpacity = headerTranslateY.interpolate({
+  const logoOpacity = headerTranslateY.interpolate({
     inputRange: [-HEADER_HEIGHT / 1.5, 0],
     outputRange: [0, 1],
     extrapolate: "clamp",
   });
 
-  const titleTranslateY = headerTranslateY.interpolate({
+  const logoTranslateY = headerTranslateY.interpolate({
     inputRange: [-HEADER_HEIGHT, 0],
     outputRange: [-20, 0],
     extrapolate: "clamp",
   });
 
   return (
-    <View className="flex-1 bg-white">
+    <View>
       <Header
         headerHeight={headerHeight}
-        titleOpacity={titleOpacity}
-        titleTranslateY={titleTranslateY}
+        logoOpacity={logoOpacity}
+        logoTranslateY={logoTranslateY}
       />
 
       <Animated.ScrollView
-        className="flex-1"
+        className="flex-2"
+        decelerationRate={0.998}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingTop: HEADER_HEIGHT + 10,
@@ -102,7 +102,6 @@ export default function Home() {
         
         onScrollBeginDrag={handleScrollBeginDrag} 
         onScrollEndDrag={handleScrollEnd}
-        onMomentumScrollEnd={handleScrollEnd}
         scrollEventThrottle={16}
       >
         {Array.from({ length: 100 }).map((_, idx) => (
