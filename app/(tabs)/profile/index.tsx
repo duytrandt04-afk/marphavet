@@ -1,8 +1,8 @@
+import CustomButtonComponent from '@/components/UI/CustomButtonComponent';
 import { FIREBASE_AUTH } from '@/FirebaseConfig';
 import { router } from 'expo-router';
 import { signOut } from 'firebase/auth';
 import React from 'react';
-import { Button, View } from 'react-native';
 
 const Profile = () => {
   const logout = async () => {
@@ -14,11 +14,9 @@ const Profile = () => {
     } finally {
       router.replace("/login");
     }
-};
+  };
   return (
-    <View>
-        <Button title="Logout" onPress={logout} />
-    </View>
+    <CustomButtonComponent text='Log out' onPress={logout} />
   )
 }
 

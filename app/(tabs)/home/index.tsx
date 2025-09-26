@@ -3,7 +3,7 @@ import { useRef } from "react";
 import { Animated, Platform, Text, View } from "react-native";
 
 export default function Home() {
-  const HEADER_HEIGHT = Platform.OS === "ios" ? 54 : 40;
+  const HEADER_HEIGHT = Platform.OS === "ios" ? 50 : 40;
   const scrollY = useRef(new Animated.Value(0)).current;
   const lastScrollY = useRef(0);
   const headerTranslateY = useRef(new Animated.Value(0)).current;

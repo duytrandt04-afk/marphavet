@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-const Video = () => {
+const ShoppingCart = () => {
   return (
     <View>
-      <Text>video</Text>
+      <Text>ShoppingCart</Text>
     </View>
   )
 }
 
-export default Video
+export default ShoppingCart

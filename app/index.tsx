@@ -1,29 +1,31 @@
+// app/index.tsx
 import { FIREBASE_AUTH } from "@/FirebaseConfig";
-import { Redirect } from "expo-router";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { useEffect, useState } from "react";
+import * as SplashScreen from "expo-splash-screen";
+import { useRouter } from "expo-router";
+
+SplashScreen.preventAutoHideAsync();
 
 export default function Index() {
-  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (user) => {
+    const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (user: User | null) => {
       console.log("user:", user);
-      setUser(user);
+      if (user) {
+        router.replace("/(tabs)/home");
+      } else {
+        router.replace("/login");
+      }
       setLoading(false);
+      SplashScreen.hideAsync();
     });
 
-    return unsubscribe; // cleanup listener
-  }, []);
+    return unsubscribe;
+  }, [router]);
 
-  if (loading) {
-    return null; // or a splash screen component
-  }
-
-  return user ? (
-    <Redirect href="/(tabs)/home" />
-  ) : (
-    <Redirect href="/login" />
-  );
+  if (loading) return null;
+  return null;
 }

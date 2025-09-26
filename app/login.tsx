@@ -2,7 +2,8 @@ import { FIREBASE_AUTH } from '@/FirebaseConfig'
 import { router } from 'expo-router'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
 import React, { useState } from 'react'
-import { ActivityIndicator, Button, KeyboardAvoidingView, StyleSheet, TextInput, View } from 'react-native'
+import { ActivityIndicator, KeyboardAvoidingView, StyleSheet, TextInput, View } from 'react-native'
+import CustomButtonComponent from '@/components/UI/CustomButtonComponent';
 
 const login = () => {
     const [email, setEmail] = useState('');
@@ -15,12 +16,12 @@ const login = () => {
         try {
             const response = await signInWithEmailAndPassword(auth, email, password);
             console.log(response);
+            router.replace("/(tabs)/home");
         } catch (error: any) {
             console.log(error);
             alert('Sign in failed' + error.message);
         } finally {
             setLoading(false);
-            router.replace("/(tabs)/home");
         }
     }
 
@@ -60,8 +61,9 @@ const login = () => {
                 {loading ? (
                     <ActivityIndicator size="large" color="#000ff"/> 
                 ) : <>
-                    <Button title="Login" onPress={signIn} />
-                    <Button title="Sign Up" onPress={signUp} />
+                    <CustomButtonComponent text='Sign In' onPress={signIn} />
+                    <CustomButtonComponent text='Sign Up' onPress={signUp} />
+
                 </>}
             </KeyboardAvoidingView>
         </View>

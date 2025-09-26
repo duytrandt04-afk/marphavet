@@ -5,6 +5,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Octicons from '@expo/vector-icons/Octicons';
 import { Tabs } from 'expo-router';
+import Feather from '@expo/vector-icons/Feather';
 
 export default function TabLayout() {
   const iconSize = rMS(25)
@@ -42,10 +43,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="video"
+        name="shoppingCart"
         options={{
-          title: 'Video',
-          tabBarIcon: ({ color }) => <Octicons size={iconSize} name="video" color={color} />,
+          title: 'Shopping cart',
+          tabBarIcon: ({ color }) => <Feather size={iconSize} name="shopping-cart" color={color} />,
         }}
       />
       <Tabs.Screen
