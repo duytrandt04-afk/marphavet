@@ -1,108 +1,116 @@
-import { ScrollView, Text, View, Animated, Platform } from "react-native";
-import { useState, useRef } from "react";
 import Header from "@/components/layout/Header";
+import { useRef } from "react";
+import { Animated, Platform, Text, View } from "react-native";
 
 export default function Home() {
+  const HEADER_HEIGHT = Platform.OS === "ios" ? 50 : 40;
   const scrollY = useRef(new Animated.Value(0)).current;
-  const [isScrollingDown, setIsScrollingDown] = useState(false);
   const lastScrollY = useRef(0);
+  const headerTranslateY = useRef(new Animated.Value(0)).current;
+  const headerTranslateYValue = useRef(0);
+  const snapScrollYStart = useRef(0); 
 
-  // Header height (adjust this to match your header height)
-  const HEADER_HEIGHT = Platform.OS === 'ios' ? 88 : 72;
-
-  const handleScroll = Animated.event(
-    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-    {
-      useNativeDriver: false,
-      listener: (event: any) => {
-        const currentScrollY = event.nativeEvent.contentOffset.y;
-        const scrollDifference = currentScrollY - lastScrollY.current;
-        
-        // Only trigger animation if scroll difference is significant (reduces jitter)
-        if (Math.abs(scrollDifference) > 5) {
-          setIsScrollingDown(scrollDifference > 0 && currentScrollY > 50);
-          lastScrollY.current = currentScrollY;
-        }
-      },
+  scrollY.addListener(({ value }) => {
+    if (value <= 0) {
+      headerTranslateY.setValue(0);
+      headerTranslateYValue.current = 0;
+      lastScrollY.current = value;
+      return;
     }
-  );
+    
+    const scrollDelta = value - lastScrollY.current;
 
-  // Animate header position
-  const headerTranslateY = scrollY.interpolate({
-    inputRange: [0, HEADER_HEIGHT],
-    outputRange: [0, -HEADER_HEIGHT],
-    extrapolate: 'clamp',
+    let newTranslateY = headerTranslateYValue.current - scrollDelta;
+    
+    if (newTranslateY < -HEADER_HEIGHT) {
+      newTranslateY = -HEADER_HEIGHT;
+    } else if (newTranslateY > 0) {
+      newTranslateY = 0;
+    }
+
+    headerTranslateY.setValue(newTranslateY);
+    headerTranslateYValue.current = newTranslateY;
+    lastScrollY.current = value;
   });
 
-  // Animate header opacity
-  const headerOpacity = scrollY.interpolate({
-    inputRange: [0, HEADER_HEIGHT / 2, HEADER_HEIGHT],
-    outputRange: [1, 0.5, 0],
-    extrapolate: 'clamp',
+  const handleScrollBeginDrag = (e: any) => {
+    snapScrollYStart.current = e.nativeEvent.contentOffset.y;
+  };
+  
+  const handleScrollEnd = (e: any) => {
+    const currentTranslateY = headerTranslateYValue.current;
+    const scrollYEnd = e.nativeEvent.contentOffset.y;
+    const scrollDelta = scrollYEnd - snapScrollYStart.current;
+
+    let toValue;
+    if (scrollDelta > 10) {
+      toValue = -HEADER_HEIGHT; 
+    } else {
+      toValue = 0; 
+    }
+    
+    if (currentTranslateY !== toValue) {
+      Animated.timing(headerTranslateY, {
+        toValue: toValue,
+        duration: 300,
+        useNativeDriver: false,
+      }).start(() => {
+        headerTranslateYValue.current = toValue;
+      });
+    }
+  };
+  
+  const headerHeight = headerTranslateY.interpolate({
+    inputRange: [-HEADER_HEIGHT, 0],
+    outputRange: [0, HEADER_HEIGHT],
+    extrapolate: "clamp",
+  });
+
+  const logoOpacity = headerTranslateY.interpolate({
+    inputRange: [-HEADER_HEIGHT / 1.5, 0],
+    outputRange: [0, 1],
+    extrapolate: "clamp",
+  });
+
+  const logoTranslateY = headerTranslateY.interpolate({
+    inputRange: [-HEADER_HEIGHT, 0],
+    outputRange: [-20, 0],
+    extrapolate: "clamp",
   });
 
   return (
-    <View className="flex-1 bg-white">
-      {/* Animated Header */}
-      <Animated.View
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 1000,
-          transform: [{ translateY: headerTranslateY }],
-          opacity: headerOpacity,
-        }}
-      >
-        <Header title="Home" />
-      </Animated.View>
+    <View>
+      <Header
+        headerHeight={headerHeight}
+        logoOpacity={logoOpacity}
+        logoTranslateY={logoTranslateY}
+      />
 
-      {/* Content with top padding to account for header */}
-      <ScrollView
-        className="flex-1"
+      <Animated.ScrollView
+        className="flex-2"
+        decelerationRate={0.998}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          paddingTop: HEADER_HEIGHT, // Space for fixed header
+          paddingTop: HEADER_HEIGHT + 10,
           paddingHorizontal: 20,
-          paddingBottom: 20,
-          minHeight: '100%'
+          paddingBottom: 5,
         }}
-        onScroll={handleScroll}
-        scrollEventThrottle={16} // Smooth animation (60fps)
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: false }
+        )}
+        
+        onScrollBeginDrag={handleScrollBeginDrag} 
+        onScrollEndDrag={handleScrollEnd}
+        scrollEventThrottle={16}
       >
-        <Text className="text-base leading-6 mb-4">
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Consectetur at, illum animi quibusdam quos sed ad corrupti iure aliquid, pariatur provident similique quidem iusto accusamus explicabo consequuntur. Reprehenderit, omnis alias!
-        </Text>
-        
-        <Text className="text-base leading-6 mb-4">
-          Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-        </Text>
-        
-        <Text className="text-base leading-6 mb-4">
-          Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-        </Text>
-        
-        <Text className="text-base leading-6 mb-4">
-          At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident.
-        </Text>
-        
-        <Text className="text-base leading-6 mb-4">
-          Similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio nam libero tempore.
-        </Text>
-        
-        <Text className="text-base leading-6 mb-4">
-          Cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.
-        </Text>
-        
-        <Text className="text-base leading-6 mb-4">
-          Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.
-        </Text>
-        
-        <Text className="text-base leading-6 mb-4">
-          Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
-        </Text>
-      </ScrollView>
+        {Array.from({ length: 100 }).map((_, idx) => (
+          <Text key={idx} className="text-base leading-6 mb-6">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis
+            dignissim ipsum in quam facilisis, vitae tincidunt purus bibendum.
+          </Text>
+        ))}
+      </Animated.ScrollView>
     </View>
   );
 }

@@ -14,7 +14,7 @@ const QRScanTabItemComponent = ({onPress}: Props) => {
         <Button
             onPress={() => onPress}
             title="Learn More"
-            color={Colors.emRuy}
+            color={Colors.tabItem}
             accessibilityLabel="Learn more about this purple button"
         />
       </View>
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
   },
   backgroundContainer: {
     borderRadius: rMSV(100),
-    backgroundColor: Colors.anhAn,
+    backgroundColor: Colors.tabItem,
     padding: rMSV(5),
     bottom: rMSV(20),
     transform: [{translateY: rMSV(-6)}],

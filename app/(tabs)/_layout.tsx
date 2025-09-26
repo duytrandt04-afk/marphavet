@@ -1,13 +1,14 @@
+import { rMS, rV } from '@/styles/responsiveStyle';
+import { Colors } from '@/theme/colors';
+import Entypo from '@expo/vector-icons/Entypo';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Octicons from '@expo/vector-icons/Octicons';
 import { Tabs } from 'expo-router';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import { rV, rMS } from '@/styles/responsiveStyle';
-import { Colors } from '@/theme/colors';
-
-const size = rMS(27)
+import Feather from '@expo/vector-icons/Feather';
 
 export default function TabLayout() {
+  const iconSize = rMS(25)
   return (
     <Tabs
       screenOptions={{ 
@@ -22,7 +23,8 @@ export default function TabLayout() {
           marginTop: rV(5)
         },
         tabBarStyle: {
-          height: rV(40)
+          height: rV(40),
+          paddingHorizontal: rMS(5)
         },
       }}
     >
@@ -30,28 +32,35 @@ export default function TabLayout() {
         name="home"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <FontAwesome size={size} name="home" color={color} />,
+          tabBarIcon: ({ color }) => <Entypo size={iconSize} name="home" color={color} />,
         }}
       />
       <Tabs.Screen
-        name="video"
+        name="search"
         options={{
-          title: 'Video',
-          tabBarIcon: ({ color }) => <Octicons size={size} name="video" color={color} />,
+          title: 'Search',
+          tabBarIcon: ({ color }) => <Octicons size={iconSize} name="search" color={color} />,
         }}
       />
       <Tabs.Screen
-        name="marketplace"
+        name="shoppingCart"
         options={{
-          title: 'Marketplace',
-          tabBarIcon: ({ color }) => <AntDesign size={size} name="shop" color={color} />,
+          title: 'Shopping cart',
+          tabBarIcon: ({ color }) => <Feather size={iconSize} name="shopping-cart" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="notification"
+        options={{
+          title: 'Notification',
+          tabBarIcon: ({ color }) => <MaterialCommunityIcons size={iconSize} name="bell" color={color} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ color }) => <FontAwesome size={size} name="user" color={color} />,
+          tabBarIcon: ({ color }) => <FontAwesome size={iconSize} name="user" color={color} />,
         }}
       />
     </Tabs>
